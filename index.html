@@ -764,9 +764,16 @@ function renderTable(){
     const est=d.estado||'Por revisar';
     const hasPub=!!(d.pubId&&store.cal.some(function(x){return x.id===d.pubId;}));
     const calBtn=hasPub?'<button class="sec" disabled title="Esta idea ya se convirtió en publicación en el calendario">✓ Ya es publicación</button>':'<button class="sec'+(d.enCal?' on':'')+'" data-r="cal"'+(est!=='Aprobado'?' disabled title="Apruébala para poder agregarla al calendario"':'')+'>'+(d.enCal?'✓ En el calendario · Quitar':'Agregar al calendario')+'</button>';
+    const publicView=document.body.classList.contains('public-view');
+    const dateCell=publicView
+      ? '<span class="public-date">'+esc(validDate(d.fecha)||'—')+'</span>'
+      : '<input type="date" class="datein" data-g="fecha" value="'+esc(validDate(d.fecha))+'">';
+    const statusCell=publicView
+      ? '<span class="public-status">'+esc(est)+'</span>'
+      : '<select class="estsel est-'+est.replace(' ','')+'" data-g="estado">'+ESTADOS.map(function(o){return '<option'+(o===est?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
     return '<tr data-id="'+d.id+'"><td>'+cell(d,'marca','Marca')+'</td><td>'+redBox(d)+'</td><td>'+paisBox(d)+'</td><td>'+cell(d,'idea','Título de la idea')+'</td><td>'+cell(d,'descripcion','Describe la idea')+'</td>'
-    +'<td><input type="date" class="datein" data-g="fecha" value="'+esc(validDate(d.fecha))+'"></td>'
-    +'<td><select class="estsel est-'+est.replace(' ','')+'" data-g="estado">'+ESTADOS.map(function(o){return '<option'+(o===est?' selected':'')+'>'+o+'</option>';}).join('')+'</select>'
+    +'<td>'+dateCell+'</td>'
+    +'<td>'+statusCell
     +(est==='Corregir'?'<div class="cell cm" contenteditable data-g="comentarios" data-ph="Escribe qué hay que corregir…">'+esc(d.comentarios)+'</div>':'')+'</td>'
     +'<td><div class="tact"><button class="pri" data-r="mk">Estructurar copy</button>'+calBtn+'<button class="ghost" data-r="del">Eliminar</button></div></td></tr>';
   }).join('');
